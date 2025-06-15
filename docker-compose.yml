@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  ecosurprise-go:
+    build: .
+    container_name: ecosurprise-go-backend
+    restart: always
+    environment:
+      DB_HOST: ${DB_HOST:-db:3306}
+      DB_USER: ${DB_USER:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      DB_NAME: ${DB_NAME:-ecosurprise}
+      JWT_SECRET: ${JWT_SECRET:-ecosurprise_secret_key_2024_secure_and_long_enough_for_hs512}
+      PORT: ${PORT:-8080}
+      ENV: ${ENV:-production}
+      APP_IP: ${APP_IP:-*}
+    ports:
+      - "8080:8080"
+    volumes:
+      - app_uploads:/app/uploads
+    depends_on:
+      - db
+    networks:
+      - ecosurprise-network
+
+  db:
+    image: mysql:8.0
+    container_name: ecosurprise-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_DATABASE: ${DB_NAME:-ecosurprise}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ecosurprise-network
+
+volumes:
+  app_uploads:
+    driver: local
+  mysql_data:
+    driver: local
+
+networks:
+  ecosurprise-network:
+    driver: bridge
