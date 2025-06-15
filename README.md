@@ -1,6 +1,6 @@
 # EcoSurprise - Go Backend Completo
 
-Réplica **no funcional** del sistema de e-commerce EcoSurprise, migrado desde Spring Boot a Go con todas las características implementadas.
+Réplica **en desarrollo** del sistema de e-commerce EcoSurprise, migrado desde Spring Boot a Go con todas las características implementadas.
 
 ## 🎯 **Funcionalidades Implementadas**
 
@@ -50,7 +50,6 @@ GET /api/admin/comerciantes/:id           # Obtener comerciante
 ### **Consumidores**
 ```bash
 POST /api/consumidores/:id/establecerImagen           # Subir imagen
-POST /api/consumidores/:id/crearTelefono             # Agregar teléfono
 POST /api/consumidores/:id/crearDireccion            # Agregar dirección
 
 # Productos
@@ -73,7 +72,6 @@ POST /api/consumidores/:id/ordenes/:orderId/cancelar # Cancelar orden
 ### **Comerciantes**
 ```bash
 POST /api/comerciantes/:id/establecerImagen         # Subir imagen
-POST /api/comerciantes/:id/crearTelefono           # Agregar teléfono
 
 # Productos
 POST /api/comerciantes/:id/crearProducto                    # Crear producto
@@ -156,6 +154,10 @@ ecosurprise/
 
 ## 🚀 **Instalación y Uso**
 
+- Go 1.21+
+- Docker y Docker Compose
+- MySQL 8.0+
+
 ### **Setup Local**
 ```bash
 # 1. Clonar proyecto
@@ -164,34 +166,15 @@ cd Eco_GO
 
 # 2. Configurar entorno
 make dev-setup
+
 # Edita .env con tus configuraciones
 
 # 3. Instalar dependencias
-make deps
+go mod tidy
+
 
 # 4. Ejecutar
-make run
-```
-
-### **Con Docker**
-```bash
-# Ejecutar stack completo
-make docker-run
-
-# Ver logs
-make logs
-
-# Detener
-make docker-stop
-```
-
-### **Comandos Disponibles**
-```bash
-make build       # Compilar binario
-make run         # Ejecutar desarrollo
-make test        # Ejecutar tests
-make clean       # Limpiar builds
-make docker-build # Construir imagen
+go build
 ```
 
 ## 🔧 **Configuración**
@@ -239,55 +222,38 @@ BASE_URL=http://localhost:8080
 - ✅ **Validación** de entrada con Gin binding
 - ✅ **Upload seguro** de archivos
 
+
 ## 🧪 **Testing**
+
+Actualmente no se encuentran implementados tests 
 
 ```bash
 # Ejecutar todos los tests
-make test
-
-# Test con cobertura
-go test -cover ./...
-
-# Test específico
-go test ./internal/services/
+go test ./...
 ```
+
 
 ## 📦 **Deployment**
 
 ### **Railway**
-```bash
-railway login
-railway init ecosurprise-go
-railway up
-```
 
-### **Docker Hub**
-```bash
-docker build -t yourusername/ecosurprise-go .
-docker push yourusername/ecosurprise-go
-```
 
-### **Kubernetes**
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ecosurprise-go
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: ecosurprise-go
-  template:
-    metadata:
-      labels:
-        app: ecosurprise-go
-    spec:
-      containers:
-      - name: ecosurprise-go
-        image: yourusername/ecosurprise-go:latest
-        ports:
-        - containerPort: 8080
+Arhivo: **CI-CD.yml**
+```bash
+deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Deploy to Railway
+      run: |
+        # Configurar Railway CLI y deployment
+        echo "Deploying to Railway..."
+      env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 ```
 
 ## 🤝 **Contribución**
@@ -308,6 +274,7 @@ spec:
 - [ ] Logging estructurado
 - [ ] Rate limiting
 - [ ] API versioning
+- [ ] Testing
 
 ---
 
